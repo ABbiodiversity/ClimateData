@@ -189,6 +189,7 @@ for (climate in colnames(kgrid.1961.1990)[9:40]) {
           legend.text = element_text(size=14),
           legend.title = element_text(size=16),
           legend.key.size = unit(1, "cm"), 
+          plot.title = element_text(size=22),
           axis.line = element_line(colour = "black"),
           panel.border = element_rect(colour = "black", fill=NA, size=1),
           legend.position = c(0.15, 0.15))
@@ -214,6 +215,7 @@ for (climate in colnames(kgrid.1961.1990)[9:40]) {
           legend.text = element_text(size=14),
           legend.title = element_text(size=16),
           legend.key.size = unit(1, "cm"), 
+          plot.title = element_text(size=22),
           axis.line = element_line(colour = "black"),
           panel.border = element_rect(colour = "black", fill=NA, size=1),
           legend.position = c(0.15, 0.15))
@@ -239,6 +241,7 @@ for (climate in colnames(kgrid.1961.1990)[9:40]) {
           legend.text = element_text(size=14),
           legend.title = element_text(size=16),
           legend.key.size = unit(1, "cm"), 
+          plot.title = element_text(size=22),
           axis.line = element_line(colour = "black"),
           panel.border = element_rect(colour = "black", fill=NA, size=1),
           legend.position = c(0.15, 0.15))
@@ -264,6 +267,7 @@ for (climate in colnames(kgrid.1961.1990)[9:40]) {
           legend.text = element_text(size=14),
           legend.title = element_text(size=16),
           legend.key.size = unit(1, "cm"), 
+          plot.title = element_text(size=22),
           axis.line = element_line(colour = "black"),
           panel.border = element_rect(colour = "black", fill=NA, size=1),
           legend.position = c(0.15, 0.15))

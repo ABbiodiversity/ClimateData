@@ -10,7 +10,7 @@ file.create(paste0(getwd(), "/docs/.nojekyll"))
 # Render bookdown
 bookdown::render_book(input = "bookdown/", 
                       output_format = "bookdown::gitbook",
-                      output_dir = paste0(getwd(), "/docs/"))
+                      output_dir = "D:/abmi/ClimateData/docs/")
 
 
 
