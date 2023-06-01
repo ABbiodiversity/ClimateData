@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>3 Results | Exploring adoption of new AdaptWest climate data into the species habitat models</title>
+  <meta name="description" content="Technical documentation describing exploration of the climate data used in ABMI species habitat models" />
+  <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="3 Results | Exploring adoption of new AdaptWest climate data into the species habitat models" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Technical documentation describing exploration of the climate data used in ABMI species habitat models" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="3 Results | Exploring adoption of new AdaptWest climate data into the species habitat models" />
+  
+  <meta name="twitter:description" content="Technical documentation describing exploration of the climate data used in ABMI species habitat models" />
+  
+
+<meta name="author" content="Brandon Allen" />
+
+
+<meta name="date" content="2023-06-01" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="methods.html"/>
+<link rel="next" href="discussion.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Climate Data</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#acknowledgements"><i class="fa fa-check"></i><b>1.1</b> Acknowledgements</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#suggested-citation"><i class="fa fa-check"></i><b>1.2</b> Suggested citation</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#contact"><i class="fa fa-check"></i><b>1.3</b> Contact</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="methods.html"><a href="methods.html"><i class="fa fa-check"></i><b>2</b> Methods</a></li>
+<li class="chapter" data-level="3" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>3</b> Results</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="results.html"><a href="results.html#abmi-versus-adaptwest"><i class="fa fa-check"></i><b>3.1</b> ABMI versus AdaptWest</a></li>
+<li class="chapter" data-level="3.2" data-path="results.html"><a href="results.html#adaptwest-climate-normals"><i class="fa fa-check"></i><b>3.2</b> AdaptWest Climate Normals</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="results.html"><a href="results.html#mean-annual-temperature-mat"><i class="fa fa-check"></i><b>3.2.1</b> Mean Annual Temperature (MAT)</a></li>
+<li class="chapter" data-level="3.2.2" data-path="results.html"><a href="results.html#mean-warmest-month-temperature-mwmt"><i class="fa fa-check"></i><b>3.2.2</b> Mean Warmest Month Temperature (MWMT)</a></li>
+<li class="chapter" data-level="3.2.3" data-path="results.html"><a href="results.html#mean-coldest-month-temperature-mcmt"><i class="fa fa-check"></i><b>3.2.3</b> Mean Coldest Month Temperature (MCMT)</a></li>
+<li class="chapter" data-level="3.2.4" data-path="results.html"><a href="results.html#difference-between-mcmt-and-mwmt-as-a-measure-of-continentality-td"><i class="fa fa-check"></i><b>3.2.4</b> Difference between MCMT and MWMT, as a measure of continentality (TD)</a></li>
+<li class="chapter" data-level="3.2.5" data-path="results.html"><a href="results.html#mean-annual-precipitation-map"><i class="fa fa-check"></i><b>3.2.5</b> Mean Annual Precipitation (MAP)</a></li>
+<li class="chapter" data-level="3.2.6" data-path="results.html"><a href="results.html#mean-summer-may-to-september-precipitation-msp"><i class="fa fa-check"></i><b>3.2.6</b> Mean Summer (May to September) Precipitation (MSP)</a></li>
+<li class="chapter" data-level="3.2.7" data-path="results.html"><a href="results.html#annual-heat-moisture-index-ahm"><i class="fa fa-check"></i><b>3.2.7</b> Annual Heat Moisture Index (AHM)</a></li>
+<li class="chapter" data-level="3.2.8" data-path="results.html"><a href="results.html#summer-heat-moisture-index-shm"><i class="fa fa-check"></i><b>3.2.8</b> Summer Heat Moisture Index (SHM)</a></li>
+<li class="chapter" data-level="3.2.9" data-path="results.html"><a href="results.html#degree-days-below-0c-dd_0"><i class="fa fa-check"></i><b>3.2.9</b> Degree-days below 0C (DD_0)</a></li>
+<li class="chapter" data-level="3.2.10" data-path="results.html"><a href="results.html#degree-days-above-6c-dd5"><i class="fa fa-check"></i><b>3.2.10</b> Degree-days above 6C (DD5)</a></li>
+<li class="chapter" data-level="3.2.11" data-path="results.html"><a href="results.html#degree-days-below-18c-dd_18"><i class="fa fa-check"></i><b>3.2.11</b> Degree-days below 18C (DD_18)</a></li>
+<li class="chapter" data-level="3.2.12" data-path="results.html"><a href="results.html#degree-days-above-18c-dd18"><i class="fa fa-check"></i><b>3.2.12</b> Degree-days above 18C (DD18)</a></li>
+<li class="chapter" data-level="3.2.13" data-path="results.html"><a href="results.html#the-number-of-frost-free-days-nffd"><i class="fa fa-check"></i><b>3.2.13</b> The number of frost-free days (NFFD)</a></li>
+<li class="chapter" data-level="3.2.14" data-path="results.html"><a href="results.html#julian-date-on-which-the-forst-free-period-begins-bffp"><i class="fa fa-check"></i><b>3.2.14</b> Julian date on which the forst-free period begins (bFFP)</a></li>
+<li class="chapter" data-level="3.2.15" data-path="results.html"><a href="results.html#julian-date-on-which-the-forst-free-period-ends-effp"><i class="fa fa-check"></i><b>3.2.15</b> Julian date on which the forst-free period ends (eFFP)</a></li>
+<li class="chapter" data-level="3.2.16" data-path="results.html"><a href="results.html#precipitation-as-snow-pas"><i class="fa fa-check"></i><b>3.2.16</b> Precipitation as snow (PAS)</a></li>
+<li class="chapter" data-level="3.2.17" data-path="results.html"><a href="results.html#extreme-minimum-temperature-over-30-years-emt"><i class="fa fa-check"></i><b>3.2.17</b> Extreme minimum temperature over 30 years (EMT)</a></li>
+<li class="chapter" data-level="3.2.18" data-path="results.html"><a href="results.html#extreme-maximum-temperature-over-30-years-ext"><i class="fa fa-check"></i><b>3.2.18</b> Extreme maximum temperature over 30 years (EXT)</a></li>
+<li class="chapter" data-level="3.2.19" data-path="results.html"><a href="results.html#hargreaves-reference-evaporation-eref"><i class="fa fa-check"></i><b>3.2.19</b> Hargreave’s reference evaporation (Eref)</a></li>
+<li class="chapter" data-level="3.2.20" data-path="results.html"><a href="results.html#hargreaves-climate-moisture-index-cmd"><i class="fa fa-check"></i><b>3.2.20</b> Hargreave’s climate moisture index (CMD)</a></li>
+<li class="chapter" data-level="3.2.21" data-path="results.html"><a href="results.html#mean-annual-relative-humidity-rh"><i class="fa fa-check"></i><b>3.2.21</b> Mean annual relative humidity (RH)</a></li>
+<li class="chapter" data-level="3.2.22" data-path="results.html"><a href="results.html#hoggs-climate-moisture-index-cmi"><i class="fa fa-check"></i><b>3.2.22</b> Hogg’s climate moisture index (CMI)</a></li>
+<li class="chapter" data-level="3.2.23" data-path="results.html"><a href="results.html#degree-days-above-10c-and-below-40c-dd1040"><i class="fa fa-check"></i><b>3.2.23</b> Degree days above 10C and below 40C (DD1040)</a></li>
+<li class="chapter" data-level="3.2.24" data-path="results.html"><a href="results.html#winter-december-to-february-mean-temperature-tave_wt"><i class="fa fa-check"></i><b>3.2.24</b> Winter (December to February) mean temperature (Tave_wt)</a></li>
+<li class="chapter" data-level="3.2.25" data-path="results.html"><a href="results.html#spring-march-to-may-mean-temperature-tave_sp"><i class="fa fa-check"></i><b>3.2.25</b> Spring (March to May) mean temperature (Tave_sp)</a></li>
+<li class="chapter" data-level="3.2.26" data-path="results.html"><a href="results.html#summer-june-to-august-mean-temperature-tave_sm"><i class="fa fa-check"></i><b>3.2.26</b> Summer (June to August) mean temperature (Tave_sm)</a></li>
+<li class="chapter" data-level="3.2.27" data-path="results.html"><a href="results.html#autumn-september-to-november-mean-temperature-tave_at"><i class="fa fa-check"></i><b>3.2.27</b> Autumn (September to November) mean temperature (Tave_at)</a></li>
+<li class="chapter" data-level="3.2.28" data-path="results.html"><a href="results.html#winter-december-to-february-mean-precipitation-ppt_wt"><i class="fa fa-check"></i><b>3.2.28</b> Winter (December to February) mean precipitation (PPT_wt)</a></li>
+<li class="chapter" data-level="3.2.29" data-path="results.html"><a href="results.html#spring-march-to-may-mean-precipitation-ppt_sp"><i class="fa fa-check"></i><b>3.2.29</b> Spring (March to May) mean precipitation (PPT_sp)</a></li>
+<li class="chapter" data-level="3.2.30" data-path="results.html"><a href="results.html#summer-june-to-august-mean-temperatuprecipitationre-ppt_sm"><i class="fa fa-check"></i><b>3.2.30</b> Summer (June to August) mean temperatuprecipitationre (PPT_sm)</a></li>
+<li class="chapter" data-level="3.2.31" data-path="results.html"><a href="results.html#autumn-september-to-november-mean-precipitation-ppt_at"><i class="fa fa-check"></i><b>3.2.31</b> Autumn (September to November) mean precipitation (PPT_at)</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="discussion.html"><a href="discussion.html"><i class="fa fa-check"></i><b>4</b> Discussion</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/ABbiodiversity" target="blank">Published by ABMI</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Exploring adoption of new AdaptWest climate data into the species habitat models</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="results" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">3</span> Results<a href="results.html#results" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="abmi-versus-adaptwest" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> ABMI versus AdaptWest<a href="results.html#abmi-versus-adaptwest" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The data currently used by the ABMI (1961-1990) and the 1961-1990 climate normals acquired from <strong>AdaptWest</strong> are highly correlated. In addition, we observed similar correlation patterns when comparing the 1961-1990 and 1991-2020 climate normals, regardless of their source.</p>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/correlation.jpeg" style="width:80.0%" alt="" />
+<p class="caption">Correlation plots of climate variables between data sources and years.</p>
+</div>
+</center>
+</div>
+<div id="adaptwest-climate-normals" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> AdaptWest Climate Normals<a href="results.html#adaptwest-climate-normals" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="mean-annual-temperature-mat" class="section level3 hasAnchor" number="3.2.1">
+<h3><span class="header-section-number">3.2.1</span> Mean Annual Temperature (MAT)<a href="results.html#mean-annual-temperature-mat" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/MAT.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of MAT.</p>
+</div>
+</center>
+</div>
+<div id="mean-warmest-month-temperature-mwmt" class="section level3 hasAnchor" number="3.2.2">
+<h3><span class="header-section-number">3.2.2</span> Mean Warmest Month Temperature (MWMT)<a href="results.html#mean-warmest-month-temperature-mwmt" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/MWMT.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of MWMT.</p>
+</div>
+</center>
+</div>
+<div id="mean-coldest-month-temperature-mcmt" class="section level3 hasAnchor" number="3.2.3">
+<h3><span class="header-section-number">3.2.3</span> Mean Coldest Month Temperature (MCMT)<a href="results.html#mean-coldest-month-temperature-mcmt" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/MCMT.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of MCMT.</p>
+</div>
+</center>
+</div>
+<div id="difference-between-mcmt-and-mwmt-as-a-measure-of-continentality-td" class="section level3 hasAnchor" number="3.2.4">
+<h3><span class="header-section-number">3.2.4</span> Difference between MCMT and MWMT, as a measure of continentality (TD)<a href="results.html#difference-between-mcmt-and-mwmt-as-a-measure-of-continentality-td" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/TD.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of TD.</p>
+</div>
+</center>
+</div>
+<div id="mean-annual-precipitation-map" class="section level3 hasAnchor" number="3.2.5">
+<h3><span class="header-section-number">3.2.5</span> Mean Annual Precipitation (MAP)<a href="results.html#mean-annual-precipitation-map" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/MAP.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of MAP.</p>
+</div>
+</center>
+</div>
+<div id="mean-summer-may-to-september-precipitation-msp" class="section level3 hasAnchor" number="3.2.6">
+<h3><span class="header-section-number">3.2.6</span> Mean Summer (May to September) Precipitation (MSP)<a href="results.html#mean-summer-may-to-september-precipitation-msp" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/MSP.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of MSP.</p>
+</div>
+</center>
+</div>
+<div id="annual-heat-moisture-index-ahm" class="section level3 hasAnchor" number="3.2.7">
+<h3><span class="header-section-number">3.2.7</span> Annual Heat Moisture Index (AHM)<a href="results.html#annual-heat-moisture-index-ahm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/AHM.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of AHM.</p>
+</div>
+</center>
+</div>
+<div id="summer-heat-moisture-index-shm" class="section level3 hasAnchor" number="3.2.8">
+<h3><span class="header-section-number">3.2.8</span> Summer Heat Moisture Index (SHM)<a href="results.html#summer-heat-moisture-index-shm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/SHM.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of SHM.</p>
+</div>
+</center>
+</div>
+<div id="degree-days-below-0c-dd_0" class="section level3 hasAnchor" number="3.2.9">
+<h3><span class="header-section-number">3.2.9</span> Degree-days below 0C (DD_0)<a href="results.html#degree-days-below-0c-dd_0" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/DD_0.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of DD_0.</p>
+</div>
+</center>
+</div>
+<div id="degree-days-above-6c-dd5" class="section level3 hasAnchor" number="3.2.10">
+<h3><span class="header-section-number">3.2.10</span> Degree-days above 6C (DD5)<a href="results.html#degree-days-above-6c-dd5" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/DD5.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of DD5.</p>
+</div>
+</center>
+</div>
+<div id="degree-days-below-18c-dd_18" class="section level3 hasAnchor" number="3.2.11">
+<h3><span class="header-section-number">3.2.11</span> Degree-days below 18C (DD_18)<a href="results.html#degree-days-below-18c-dd_18" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/DD_18.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of DD_18.</p>
+</div>
+</center>
+</div>
+<div id="degree-days-above-18c-dd18" class="section level3 hasAnchor" number="3.2.12">
+<h3><span class="header-section-number">3.2.12</span> Degree-days above 18C (DD18)<a href="results.html#degree-days-above-18c-dd18" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/DD18.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of DD18.</p>
+</div>
+</center>
+</div>
+<div id="the-number-of-frost-free-days-nffd" class="section level3 hasAnchor" number="3.2.13">
+<h3><span class="header-section-number">3.2.13</span> The number of frost-free days (NFFD)<a href="results.html#the-number-of-frost-free-days-nffd" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/NFFD.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of NFFD.</p>
+</div>
+</center>
+</div>
+<div id="julian-date-on-which-the-forst-free-period-begins-bffp" class="section level3 hasAnchor" number="3.2.14">
+<h3><span class="header-section-number">3.2.14</span> Julian date on which the forst-free period begins (bFFP)<a href="results.html#julian-date-on-which-the-forst-free-period-begins-bffp" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/bFFP.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of bFFP.</p>
+</div>
+</center>
+</div>
+<div id="julian-date-on-which-the-forst-free-period-ends-effp" class="section level3 hasAnchor" number="3.2.15">
+<h3><span class="header-section-number">3.2.15</span> Julian date on which the forst-free period ends (eFFP)<a href="results.html#julian-date-on-which-the-forst-free-period-ends-effp" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/eFFP.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of eFFP.</p>
+</div>
+</center>
+</div>
+<div id="precipitation-as-snow-pas" class="section level3 hasAnchor" number="3.2.16">
+<h3><span class="header-section-number">3.2.16</span> Precipitation as snow (PAS)<a href="results.html#precipitation-as-snow-pas" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/PAS.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of PAS.</p>
+</div>
+</center>
+</div>
+<div id="extreme-minimum-temperature-over-30-years-emt" class="section level3 hasAnchor" number="3.2.17">
+<h3><span class="header-section-number">3.2.17</span> Extreme minimum temperature over 30 years (EMT)<a href="results.html#extreme-minimum-temperature-over-30-years-emt" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/EMT.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of EMT.</p>
+</div>
+</center>
+</div>
+<div id="extreme-maximum-temperature-over-30-years-ext" class="section level3 hasAnchor" number="3.2.18">
+<h3><span class="header-section-number">3.2.18</span> Extreme maximum temperature over 30 years (EXT)<a href="results.html#extreme-maximum-temperature-over-30-years-ext" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/EXT.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of EXT.</p>
+</div>
+</center>
+</div>
+<div id="hargreaves-reference-evaporation-eref" class="section level3 hasAnchor" number="3.2.19">
+<h3><span class="header-section-number">3.2.19</span> Hargreave’s reference evaporation (Eref)<a href="results.html#hargreaves-reference-evaporation-eref" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/Eref.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of Eref.</p>
+</div>
+</center>
+</div>
+<div id="hargreaves-climate-moisture-index-cmd" class="section level3 hasAnchor" number="3.2.20">
+<h3><span class="header-section-number">3.2.20</span> Hargreave’s climate moisture index (CMD)<a href="results.html#hargreaves-climate-moisture-index-cmd" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/CMD.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of CMD.</p>
+</div>
+</center>
+</div>
+<div id="mean-annual-relative-humidity-rh" class="section level3 hasAnchor" number="3.2.21">
+<h3><span class="header-section-number">3.2.21</span> Mean annual relative humidity (RH)<a href="results.html#mean-annual-relative-humidity-rh" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/RH.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of RH.</p>
+</div>
+</center>
+</div>
+<div id="hoggs-climate-moisture-index-cmi" class="section level3 hasAnchor" number="3.2.22">
+<h3><span class="header-section-number">3.2.22</span> Hogg’s climate moisture index (CMI)<a href="results.html#hoggs-climate-moisture-index-cmi" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/CMI.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of CMI.</p>
+</div>
+</center>
+</div>
+<div id="degree-days-above-10c-and-below-40c-dd1040" class="section level3 hasAnchor" number="3.2.23">
+<h3><span class="header-section-number">3.2.23</span> Degree days above 10C and below 40C (DD1040)<a href="results.html#degree-days-above-10c-and-below-40c-dd1040" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/DD1040.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of DD1040.</p>
+</div>
+</center>
+</div>
+<div id="winter-december-to-february-mean-temperature-tave_wt" class="section level3 hasAnchor" number="3.2.24">
+<h3><span class="header-section-number">3.2.24</span> Winter (December to February) mean temperature (Tave_wt)<a href="results.html#winter-december-to-february-mean-temperature-tave_wt" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/Tave_wt.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of Tave_wt.</p>
+</div>
+</center>
+</div>
+<div id="spring-march-to-may-mean-temperature-tave_sp" class="section level3 hasAnchor" number="3.2.25">
+<h3><span class="header-section-number">3.2.25</span> Spring (March to May) mean temperature (Tave_sp)<a href="results.html#spring-march-to-may-mean-temperature-tave_sp" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/Tave_sp.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of Tave_sp.</p>
+</div>
+</center>
+</div>
+<div id="summer-june-to-august-mean-temperature-tave_sm" class="section level3 hasAnchor" number="3.2.26">
+<h3><span class="header-section-number">3.2.26</span> Summer (June to August) mean temperature (Tave_sm)<a href="results.html#summer-june-to-august-mean-temperature-tave_sm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/Tave_sm.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of Tave_sm.</p>
+</div>
+</center>
+</div>
+<div id="autumn-september-to-november-mean-temperature-tave_at" class="section level3 hasAnchor" number="3.2.27">
+<h3><span class="header-section-number">3.2.27</span> Autumn (September to November) mean temperature (Tave_at)<a href="results.html#autumn-september-to-november-mean-temperature-tave_at" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/Tave_at.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of Tave_at.</p>
+</div>
+</center>
+</div>
+<div id="winter-december-to-february-mean-precipitation-ppt_wt" class="section level3 hasAnchor" number="3.2.28">
+<h3><span class="header-section-number">3.2.28</span> Winter (December to February) mean precipitation (PPT_wt)<a href="results.html#winter-december-to-february-mean-precipitation-ppt_wt" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/PPT_wt.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of PPT_wt.</p>
+</div>
+</center>
+</div>
+<div id="spring-march-to-may-mean-precipitation-ppt_sp" class="section level3 hasAnchor" number="3.2.29">
+<h3><span class="header-section-number">3.2.29</span> Spring (March to May) mean precipitation (PPT_sp)<a href="results.html#spring-march-to-may-mean-precipitation-ppt_sp" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/PPT_sp.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of PPT_sp.</p>
+</div>
+</center>
+</div>
+<div id="summer-june-to-august-mean-temperatuprecipitationre-ppt_sm" class="section level3 hasAnchor" number="3.2.30">
+<h3><span class="header-section-number">3.2.30</span> Summer (June to August) mean temperatuprecipitationre (PPT_sm)<a href="results.html#summer-june-to-august-mean-temperatuprecipitationre-ppt_sm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/PPT_sm.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of PPT_sm.</p>
+</div>
+</center>
+</div>
+<div id="autumn-september-to-november-mean-precipitation-ppt_at" class="section level3 hasAnchor" number="3.2.31">
+<h3><span class="header-section-number">3.2.31</span> Autumn (September to November) mean precipitation (PPT_at)<a href="results.html#autumn-september-to-november-mean-precipitation-ppt_at" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<center>
+<div class="figure">
+<img src="ClimateData_files/figures-html/results/PPT_at.jpeg" style="width:80.0%" alt="" />
+<p class="caption">30 year climate normals of PPT_at.</p>
+</div>
+</center>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="methods.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="discussion.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
