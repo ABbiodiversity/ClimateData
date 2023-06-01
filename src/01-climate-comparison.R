@@ -148,7 +148,7 @@ cor.plot <- ggplot(data = climate.correlation) +
   theme_light() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
-ggsave(filename = paste0("results/figures/corrleation.jpeg"), 
+ggsave(filename = paste0("results/figures/correlation.jpeg"), 
        plot = cor.plot,
        height = 600,
        width = 600, 
