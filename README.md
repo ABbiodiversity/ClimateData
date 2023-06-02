@@ -10,13 +10,15 @@ In the ABMI species habitat models, we include a set of climate covariates to ex
 - Acquire data from a source that also have climate projections to support any future climate change work.
 
 ## Acknowledgements
-We would like to acknowledge AdaptWest for providing the climate data used in this analysis
+We would like to acknowledge AdaptWest and Daymet for providing the climate data used in this analysis.
 
 ## Suggested citation
 
 Alberta Biodiversity Monitoring Institute. 2023. Exploring adoption of new AdaptWest climate data into the species habitat models. Alberta Biodiversity Monitoring Institute, Alberta, Canada. (https://abbiodiversity.github.io/ClimateData/) 
 
 AdaptWest Project. 2022. Gridded current and projected climate data for North America at 1km resolution, generated using the ClimateNA v7.30 software (T. Wang et al., 2022). Available at adaptwest.databasin.org.
+
+Thornton, M.M., R. Shrestha, Y. Wei, P.E. Thornton, S-C. Kao, and B.E. Wilson. 2022. Daymet: Annual Climate Summaries on a 1-km Grid for North America, Version 4 R1. ORNL DAAC, Oak Ridge, Tennessee, USA. https://doi.org/10.3334/ORNLDAAC/2130
 
 ## Contact
 

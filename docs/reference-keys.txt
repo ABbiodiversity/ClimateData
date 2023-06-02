@@ -4,6 +4,9 @@ acknowledgements
 suggested-citation
 contact
 methods
+adaptwest
+daymet
+analysis
 results
 abmi-versus-adaptwest
 adaptwest-climate-normals
@@ -38,4 +41,5 @@ winter-december-to-february-mean-precipitation-ppt_wt
 spring-march-to-may-mean-precipitation-ppt_sp
 summer-june-to-august-mean-temperatuprecipitationre-ppt_sm
 autumn-september-to-november-mean-precipitation-ppt_at
+daymet-annual-climate-data
 discussion

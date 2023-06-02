@@ -23,7 +23,7 @@
 <meta name="author" content="Brandon Allen" />
 
 
-<meta name="date" content="2023-06-01" />
+<meta name="date" content="2023-06-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -84,7 +84,12 @@
 <li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#suggested-citation"><i class="fa fa-check"></i><b>1.2</b> Suggested citation</a></li>
 <li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#contact"><i class="fa fa-check"></i><b>1.3</b> Contact</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="methods.html"><a href="methods.html"><i class="fa fa-check"></i><b>2</b> Methods</a></li>
+<li class="chapter" data-level="2" data-path="methods.html"><a href="methods.html"><i class="fa fa-check"></i><b>2</b> Methods</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="methods.html"><a href="methods.html#adaptwest"><i class="fa fa-check"></i><b>2.1</b> AdaptWest</a></li>
+<li class="chapter" data-level="2.2" data-path="methods.html"><a href="methods.html#daymet"><i class="fa fa-check"></i><b>2.2</b> Daymet</a></li>
+<li class="chapter" data-level="2.3" data-path="methods.html"><a href="methods.html#analysis"><i class="fa fa-check"></i><b>2.3</b> Analysis</a></li>
+</ul></li>
 <li class="chapter" data-level="3" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>3</b> Results</a>
 <ul>
 <li class="chapter" data-level="3.1" data-path="results.html"><a href="results.html#abmi-versus-adaptwest"><i class="fa fa-check"></i><b>3.1</b> ABMI versus AdaptWest</a></li>
@@ -122,6 +127,7 @@
 <li class="chapter" data-level="3.2.30" data-path="results.html"><a href="results.html#summer-june-to-august-mean-temperatuprecipitationre-ppt_sm"><i class="fa fa-check"></i><b>3.2.30</b> Summer (June to August) mean temperatuprecipitationre (PPT_sm)</a></li>
 <li class="chapter" data-level="3.2.31" data-path="results.html"><a href="results.html#autumn-september-to-november-mean-precipitation-ppt_at"><i class="fa fa-check"></i><b>3.2.31</b> Autumn (September to November) mean precipitation (PPT_at)</a></li>
 </ul></li>
+<li class="chapter" data-level="3.3" data-path="results.html"><a href="results.html#daymet-annual-climate-data"><i class="fa fa-check"></i><b>3.3</b> Daymet Annual Climate Data</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="discussion.html"><a href="discussion.html"><i class="fa fa-check"></i><b>4</b> Discussion</a></li>
 <li class="divider"></li>
@@ -146,7 +152,9 @@
             <section class="normal" id="section-">
 <div id="methods" class="section level1 hasAnchor" number="2">
 <h1><span class="header-section-number">2</span> Methods<a href="methods.html#methods" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p><strong>AdaptWest</strong> - This is a spatial database that provides freely available climate data across North America. Some of the data relevant to the ABMI are their 30 year climate normals, multiple climate change models, and climate refugia models. For this analysis, we downloaded the 1-km 1961-1990 climate normal data and compared it to the current climate data used by the ABMI. In addition, we downloaded climate normal data for all years that were available (1971-2000, 1981-2010. 1991-2020) to understand how climate normals have shifted over time.</p>
+<div id="adaptwest" class="section level2 hasAnchor" number="2.1">
+<h2><span class="header-section-number">2.1</span> AdaptWest<a href="methods.html#adaptwest" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>This is a spatial database that provides freely available climate data across North America. Some of the data relevant to the ABMI are their 30 year climate normals, multiple climate change models, and climate refugia models. For this analysis, we downloaded the 1-km 1961-1990 climate normal data and compared it to the current climate data used by the ABMI. In addition, we downloaded climate normal data for all years that were available (1971-2000, 1981-2010. 1991-2020) to understand how climate normals have shifted over time.</p>
 <p>The <strong>AdaptWest</strong> climate normal data contains 33 bioclimatic variables, 6 of which are current used in the ABMI species habitat models.</p>
 <table class="kable_wrapper lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
@@ -539,8 +547,17 @@ FALSE
 </tr>
 </tbody>
 </table>
-<p>For climate variables available through AdaptWest and currently used by the ABMI, we compared the 1961-1990 climate normals to validate the similarity of the two datasets. In addition, compared the correlation between the ABMI 1961-1900 climate normals and AdaptWest 1991-2020 as well as the AdaptWest 1961-1900 climate normals and AdaptWest 1991-2020. This will help us understand how much the the climate normals have shifted over time and how that might impact the next iteration of our species habitat models.</p>
+</div>
+<div id="daymet" class="section level2 hasAnchor" number="2.2">
+<h2><span class="header-section-number">2.2</span> Daymet<a href="methods.html#daymet" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>This is a spatial database that provides freely available climate data across North America. They provide information an annual averages for five variables: minimum and maximum temperature, precipitation, vapor pressure, and snow water equivalent. Annual totals, as well as daily weather are also available for the variables. 30-year climate normals are not available, though they could be reconstructed from the annual averages.</p>
+</div>
+<div id="analysis" class="section level2 hasAnchor" number="2.3">
+<h2><span class="header-section-number">2.3</span> Analysis<a href="methods.html#analysis" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>For climate variables available through <strong>AdaptWest</strong> and currently used by the ABMI, we compared the 1961-1990 climate normals to validate the similarity of the two datasets. In addition, compared the correlation between the ABMI 1961-1900 climate normals and <strong>AdaptWest</strong> 1991-2020 as well as the <strong>AdaptWest</strong> 1961-1900 climate normals and <strong>AdaptWest</strong> 1991-2020. This will help us understand how much the the climate normals have shifted over time and how that might impact the next iteration of our species habitat models.</p>
+<p>For the <strong>Daymet</strong> data, we used visualizations available through their website to assess the spatial coverage of this data.</p>
 
+</div>
 </div>
             </section>
 
