@@ -55,6 +55,16 @@ dem.data <- read_sf("data/base/gis/kgrid_dem.shp")
 dem.data <- data.frame(Row_Col = dem.data$GRID_LABEL,
                        Elevation = dem.data$RASTERVALU)
 
+# There are a few points where the zonal statistic calculaion failed (small LinkID polygons)
+# Therefore, we manually corrected them to the value of LinkID centroid
+dem.data[dem.data$Row_Col == "1143_355", "Elevation"] <- 2443.24
+dem.data[dem.data$Row_Col == "1231_398", "Elevation"] <- 1888.308
+dem.data[dem.data$Row_Col == "3_91", "Elevation"] <- 591.34
+dem.data[dem.data$Row_Col == "4_554", "Elevation"] <- 259.68
+dem.data[dem.data$Row_Col == "9_448", "Elevation"] <- 233.72
+
+table(dem.data$Elevation == 0)
+
 kgrid <- merge.data.frame(kgrid, dem.data, by = "Row_Col")
 
 # Organize columns in the appropriate order and rename
@@ -139,7 +149,7 @@ load("data/base/mapping/provincial-boundary.Rdata")
 # Creation of figures for the new climate data
 #
 
-for (climate in colnames(kgrid)[21:44]) {
+for (climate in colnames(kgrid)[c(16, 21:44)]) {
   
   # Define the minimum and maximum values
   min.value <- min(kgrid[, climate])
