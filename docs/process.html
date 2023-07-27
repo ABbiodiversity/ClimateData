@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>3 Results | Exploring adoption of new AdaptWest climate data into the species habitat models</title>
+  <title>5 Process | Exploring adoption of new AdaptWest climate data into the species habitat models</title>
   <meta name="description" content="Technical documentation describing exploration of the climate data used in ABMI species habitat models" />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="3 Results | Exploring adoption of new AdaptWest climate data into the species habitat models" />
+  <meta property="og:title" content="5 Process | Exploring adoption of new AdaptWest climate data into the species habitat models" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="Technical documentation describing exploration of the climate data used in ABMI species habitat models" />
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="3 Results | Exploring adoption of new AdaptWest climate data into the species habitat models" />
+  <meta name="twitter:title" content="5 Process | Exploring adoption of new AdaptWest climate data into the species habitat models" />
   
   <meta name="twitter:description" content="Technical documentation describing exploration of the climate data used in ABMI species habitat models" />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="methods.html"/>
-<link rel="next" href="outcomes.html"/>
+<link rel="prev" href="outcomes.html"/>
+
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -128,65 +128,23 @@
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="results" class="section level1 hasAnchor" number="3">
-<h1><span class="header-section-number">3</span> Results<a href="results.html#results" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div id="abmi-versus-adaptwest" class="section level2 hasAnchor" number="3.1">
-<h2><span class="header-section-number">3.1</span> ABMI versus AdaptWest<a href="results.html#abmi-versus-adaptwest" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>The data currently used by the <strong>ABMI</strong> (1961-1990) and the 1961-1990 climate normals acquired from <strong>AdaptWest</strong> are highly correlated. In addition, we observed similar correlation patterns when comparing the 1961-1990 and 1991-2020 climate normals, regardless of their source.</p>
-<center>
-<div class="figure">
-<img src="ClimateData_files/figures-html/results/correlation.jpeg" style="width:80.0%" alt="" />
-<p class="caption">Correlation plots of climate variables between data sources and years.</p>
+<div id="process" class="section level1 hasAnchor" number="5">
+<h1><span class="header-section-number">5</span> Process<a href="process.html#process" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>For the core species habitat models developed by the <strong>ABMI</strong>, we have adopted the following process for using and extracting relevant climate data. Projects outside the scope of the core species habitat models may use alternative sources of climate data depending on the needs of the project. Any questions about this process, or how to calculate specific information, can be directed to Brandon Allen (<a href="mailto:brandon.allen@ualberta.ca" class="email">brandon.allen@ualberta.ca</a>).</p>
+<div id="provincial-climate-surface" class="section level2 hasAnchor" number="5.1">
+<h2><span class="header-section-number">5.1</span> Provincial Climate Surface<a href="process.html#provincial-climate-surface" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>To create a 1-km2 climate surface for Alberta, we used the <strong>ClimateNA</strong> software (version 7.4) and queried the API using the <strong>ClimateNRr</strong> package. This package is freely available and allows users to batch process large amounts of climate data through <strong>R</strong>. The core <strong>ClimateNA</strong> software also allows batch processing, so either can be used depending on our application. Though you can perform a query through the <strong>ClimateNA</strong> web API, we recommend downloading the software and making requests locally. This maintains the confidentiality of our sites as is quicker due to the rate limits the web API has in place (100 sites per request, 100 requests per day).</p>
+<p>The <strong>ClimateNA</strong> software requires three pieces of information <em>Latitude</em>, <em>Longitude</em>, and <em>Elevation</em>. For our 1-km2 climate surface, <em>Latitude</em> and <em>Longitude</em> were calculated from the centroid of each polygon. <em>Elevation</em> was calculated as the mean value derived from <strong>ALOS World 3D</strong> (version 3.2) which is a global 30m digital surface model. The new climate data was then combined with other relevant attributes (e.g., natural subregions, percent water, etc) to create a new <em>kgrid</em> that will support our analyses.</p>
+<p>A detailed script for how this extraction was performed can be found in this repository (<strong>src/02-climate-extraction.R</strong>). In addition, details about the new <em>kgrid</em> can be found in our internal technical document repository.</p>
 </div>
-</center>
-</div>
-<div id="example-variables-extracted-from-the-adaptwest-30-year-climate-normals" class="section level2 hasAnchor" number="3.2">
-<h2><span class="header-section-number">3.2</span> Example variables extracted from the AdaptWest 30-year Climate Normals<a href="results.html#example-variables-extracted-from-the-adaptwest-30-year-climate-normals" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div id="mean-annual-temperature-mat" class="section level3 hasAnchor" number="3.2.1">
-<h3><span class="header-section-number">3.2.1</span> Mean Annual Temperature (MAT)<a href="results.html#mean-annual-temperature-mat" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<center>
-<div class="figure">
-<img src="ClimateData_files/figures-html/results/MAT.jpeg" style="width:80.0%" alt="" />
-<p class="caption">30-year climate normals of Mean Annual Temperature.</p>
-</div>
-</center>
-</div>
-<div id="mean-warmest-month-temperature-mwmt" class="section level3 hasAnchor" number="3.2.2">
-<h3><span class="header-section-number">3.2.2</span> Mean Warmest Month Temperature (MWMT)<a href="results.html#mean-warmest-month-temperature-mwmt" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<center>
-<div class="figure">
-<img src="ClimateData_files/figures-html/results/MWMT.jpeg" style="width:80.0%" alt="" />
-<p class="caption">30-year climate normals of Mean Warm Month Temperature.</p>
-</div>
-</center>
-</div>
-<div id="mean-annual-precipitation-map" class="section level3 hasAnchor" number="3.2.3">
-<h3><span class="header-section-number">3.2.3</span> Mean Annual Precipitation (MAP)<a href="results.html#mean-annual-precipitation-map" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<center>
-<div class="figure">
-<img src="ClimateData_files/figures-html/results/MAP.jpeg" style="width:80.0%" alt="" />
-<p class="caption">30-year climate normals of Mean Annual Precipitation.</p>
-</div>
-</center>
-</div>
-<div id="annual-heat-moisture-index-ahm" class="section level3 hasAnchor" number="3.2.4">
-<h3><span class="header-section-number">3.2.4</span> Annual Heat Moisture Index (AHM)<a href="results.html#annual-heat-moisture-index-ahm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<center>
-<div class="figure">
-<img src="ClimateData_files/figures-html/results/AHM.jpeg" style="width:80.0%" alt="" />
-<p class="caption">30-year climate normals of the Annual Heat-Moisture Index.</p>
-</div>
-</center>
-</div>
-</div>
-<div id="daymet-annual-climate-data" class="section level2 hasAnchor" number="3.3">
-<h2><span class="header-section-number">3.3</span> Daymet Annual Climate Data<a href="results.html#daymet-annual-climate-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<center>
-<div class="figure">
-<img src="ClimateData_files/figures-html/results/daymet-data.png" style="width:80.0%" alt="" />
-<p class="caption">Predictions of the four available climate variables arcoss North America (2019).</p>
-</div>
-</center>
+<div id="site-level-summaries" class="section level2 hasAnchor" number="5.2">
+<h2><span class="header-section-number">5.2</span> Site level Summaries<a href="process.html#site-level-summaries" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We now that we have the ability to create site specific climate information. Climate data for survey locations will be processed as follows:</p>
+<ul>
+<li>If the site coordinates are publicly available, users can extract their own climate data.</li>
+<li>However, if the site locations are not public, climate extractions will be requested through the <strong>Geospatial Centre</strong>.</li>
+<li>In situations where elevation data is unavailable for a survey location, climate data will be extracted from the the new <em>kgrid</em> based solely on their coordinates.</li>
+</ul>
 
 </div>
 </div>
@@ -195,8 +153,8 @@
           </div>
         </div>
       </div>
-<a href="methods.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="outcomes.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="outcomes.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
