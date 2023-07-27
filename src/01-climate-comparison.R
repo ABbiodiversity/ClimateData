@@ -148,7 +148,7 @@ cor.plot <- ggplot(data = climate.correlation) +
   theme_light() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
-ggsave(filename = paste0("results/figures/correlation.jpeg"), 
+ggsave(filename = paste0("results/figures/comparison/correlation.jpeg"), 
        plot = cor.plot,
        height = 600,
        width = 600, 
@@ -272,7 +272,7 @@ for (climate in colnames(kgrid.1961.1990)[9:40]) {
           panel.border = element_rect(colour = "black", fill=NA, size=1),
           legend.position = c(0.15, 0.15))
   
-  ggsave(filename = paste0("results/figures/", climate, ".jpeg"), 
+  ggsave(filename = paste0("results/figures/comparison/", climate, ".jpeg"), 
          plot = ggarrange(map.61.91, map.71.00, 
                           map.81.10, map.91.20, 
                           ncol = 2, nrow = 2),
