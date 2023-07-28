@@ -155,6 +155,17 @@ for (climate in colnames(kgrid)[c(16, 21:44)]) {
   min.value <- min(kgrid[, climate])
   max.value <- max(kgrid[, climate])
   
+  # Define title
+  if (climate == "Elevation") {
+    
+    fig.title <- "Elevation"
+    
+  } else {
+    
+    fig.title <- paste0("1991-2020 Climate Normals ", climate)
+    
+  }
+
   # Figure creation
   kgrid$Current <- kgrid[, climate]
   climate.figure <- ggplot() + 
@@ -166,7 +177,7 @@ for (climate in colnames(kgrid)[c(16, 21:44)]) {
     geom_raster(data = kgrid , aes(x = X, y = Y, fill = Current)) +
     scale_fill_gradientn(name = climate, colors = rev(met.brewer(name = "Hiroshige", n = 100, type = "continuous")), limits = c(min.value, max.value), guide = "colourbar") +
     scale_color_gradientn(colors = rev(met.brewer(name = "Hiroshige", n = 100, type = "continuous")), limits = c(min.value, max.value), guide = "none") +
-    ggtitle(paste0("1991-2020 Climate Normals ", climate)) +
+    ggtitle(fig.title) +
     theme_light() +
     theme(axis.title.x = element_blank(),
           axis.title.y = element_blank(),
