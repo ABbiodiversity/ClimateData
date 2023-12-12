@@ -1,0 +1,481 @@
+#
+# Title: Extraction of the climate data from the Climate NA software (Site summaries)
+# Created: December 4th, 2023
+# Last Updated: December 12th, 2023
+# Author: Brandon Allen
+# Objectives: Extract site level summaries for the climate data
+# Keywords: Notes, Initialization, On grid Sites, Off grid Sites, Quadrants, ESID Sites, Camera/ARU Sites, Wetland Sites
+#
+
+######### The latitude, longitude, and elevation information can't be stored permanently, so once extractions are
+# Notes # performed they need to be removed. Lat/long are extracted from site tables, elevation from the stored 30m raster
+#########~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+##################
+# Initialization # 
+##################~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Clear memory
+rm(list=ls())
+gc()
+
+# Load libraries
+library(ClimateNAr)
+library(reticulate)
+
+# Initialize arcpy
+py_discover_config() # We need version 3.9
+py_config() # Double check it is version 3.9
+
+# Set python 
+use_python(python = "C:/Users/ballen/AppData/Local/r-miniconda/envs/r-reticulate/python.exe")
+
+# Load arcpy
+arcpy <- import('arcpy') 
+
+# Define parallel processing factor
+arcpy$env$parallelProcessingFactor <- "100%"
+
+#################
+# On grid Sites # 
+#################~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Load the site paths, this file must be maintained in the 
+# "beta" folder and never uploaded to GitHub
+site.path <- read.csv("beta/site-paths_2023.csv")
+
+# Define the site path
+site.path <- paste0(site.path$Database[5], site.path$Feature[5])
+
+# Export the sites
+arcpy$ExportFeatures_conversion(in_features = site.path, 
+                                out_features = "D:/abmi/ClimateData/data/base/gis/temp/sites.shp")
+
+# Extract the DEM point values
+arcpy$sa$ExtractValuesToPoints(in_point_features = "D:/abmi/ClimateData/data/base/gis/temp/sites.shp", 
+                               in_raster = "D:/abmi/ClimateData/data/base/gis/dem/elevation_nasadem_30m.tif", 
+                               out_point_features = "D:/abmi/ClimateData/data/base/gis/temp/sites_dem.shp")
+
+# Extract the pAspen points
+arcpy$sa$ExtractValuesToPoints(in_point_features = "D:/abmi/ClimateData/data/base/gis/temp/sites.shp", 
+                               in_raster = "D:/abmi/ClimateData/data/base/gis/paspen/ASPEN9706.tif", 
+                               out_point_features = "D:/abmi/ClimateData/data/base/gis/temp/sites_paspen.shp")
+
+# Export the tables
+arcpy$ExportTable_conversion(in_table = "D:/abmi/ClimateData/data/base/gis/temp/sites_dem.shp", 
+                             out_table = "D:/abmi/ClimateData/data/base/gis/temp/sites_dem.csv")
+
+arcpy$ExportTable_conversion(in_table = "D:/abmi/ClimateData/data/base/gis/temp/sites_paspen.shp", 
+                             out_table = "D:/abmi/ClimateData/data/base/gis/temp/sites_paspen.csv")
+
+# Extract the information from ClimateNA
+# Standardize the output tables
+input.data <- read.csv("D:/abmi/ClimateData/data/base/gis/temp/sites_dem.csv")
+
+# Determine which columns identify year information
+year.col <- paste0("yr_", c(seq(2003,2019, 1), 2021, 2022, 2023))
+site.id <- data.frame(Site = NA,
+                      id1 = NA,
+                      id2 = NA,
+                      lat = NA,
+                      long = NA,
+                      elev = NA)
+
+for(col.id in year.col) {
+  
+  temp.data <- input.data[!(input.data[, col.id] %in% "N"), ]
+  
+  if(nrow(temp.data) == 0) next
+    
+  temp.data <- data.frame(Site = temp.data$ABMI,
+                          id1 = paste0(temp.data$ABMI_ID_Wi, "_", gsub("yr_", "", col.id)),
+                          id2 = paste0(temp.data$ABMI_ID_Wi, "_", gsub("yr_", "", col.id)),
+                          lat = temp.data$Latitude,
+                          long = temp.data$Longitude,
+                          elev = temp.data$RASTERVALU)
+  
+  site.id  <- rbind(site.id, temp.data)
+  rm(temp.data)
+  
+}
+
+site.id <- site.id[-1, ]
+
+# Save the results in the appropriate format appropriate input file
+write.csv(site.id[, -1], file = "D:/abmi/ClimateData/data/base/gis/temp/sites_cleaned.csv", row.names = FALSE)
+
+# Call the ClimateNA API to calculate the relevant climate variables
+# NOTE: We need to use the double backslash for the executable to read the information correctly
+ClimateNA_cmdLine(exe = "ClimateNA_v7.40.exe", 
+                  wkDir = "D:\\climateNA\\ClimateNA\\", 
+                  period = "Normal_1991_2020.nrm", 
+                  MSY = "Y", 
+                  inputFile = "D:\\abmi\\ClimateData\\data\\base\\gis\\temp\\sites_cleaned.csv", 
+                  outputFile = "D:\\abmi\\ClimateData\\data\\base\\gis\\temp\\sites_climate.csv")
+
+# Format the paspen information
+input.data <- read.csv("D:/abmi/ClimateData/data/base/gis/temp/sites_paspen.csv")
+
+# Determine which columns identify year information
+year.col <- paste0("yr_", c(seq(2003,2019, 1), 2021, 2022, 2023))
+site.id <- data.frame(Site = NA,
+                      id1 = NA,
+                      id2 = NA,
+                      lat = NA,
+                      long = NA,
+                      pAspen = NA)
+
+for(col.id in year.col) {
+  
+  temp.data <- input.data[!(input.data[, col.id] %in% "N"), ]
+  
+  if(nrow(temp.data) == 0) next
+  
+  temp.data <- data.frame(Site = temp.data$ABMI,
+                          id1 = paste0(temp.data$ABMI_ID_Wi, "_", gsub("yr_", "", col.id)),
+                          id2 = paste0(temp.data$ABMI_ID_Wi, "_", gsub("yr_", "", col.id)),
+                          lat = temp.data$Latitude,
+                          long = temp.data$Longitude,
+                          pAspen = temp.data$RASTERVALU)
+  
+  site.id  <- rbind(site.id, temp.data)
+  rm(temp.data)
+  
+}
+
+site.id <- site.id[-1, ]
+
+# Add the public site information
+public.coordinates <- read.csv("data/lookup/public-coordiantes.csv")
+public.coordinates <- public.coordinates[, c("SITE_ID", "PUBLIC_LATTITUDE", "PUBLIC_LONGITUDE",
+                                             "ELEVATION", "NATURAL_REGIONS", "NATURAL_SUBREGIONS")]
+colnames(public.coordinates) <- c("Site", "Latitude", "Longitude", "Elevation", 
+                                  "NrName", "NsrName")
+
+# There are a few missing sites names, so we need to add them
+site.id$Site[site.id$id1 %in% c("ST-430-1_2023", "ST-430-2_2023", "ST-430-3_2023")] <- 430
+site.id$Site[site.id$id1 %in% c("ST-1135-1_2023", "ST-1135-2_2023")] <- 1135
+site.id$Site[site.id$id1 %in% c("ST-1169-1_2023")] <- 1169
+
+site.id <- merge.data.frame(public.coordinates, site.id[, c("Site", "id1", "pAspen")], by = "Site")
+site.id <- site.id[, -1]
+
+# Stitch together the paspen and climate information
+climate.data <- read.csv("D:/abmi/ClimateData/data/base/gis/temp/sites_climate.csv")
+climate.data <- climate.data[, !(colnames(climate.data) %in% c("id2", "Latitude", "Longitude",
+                                                               "Elevation", "MAR"))]
+
+climate.1ha <- merge.data.frame(site.id, climate.data, by = "id1")
+colnames(climate.1ha)[1] <- "Site_Year"
+
+# Save
+save(climate.1ha, file = "results/sites/on-grid-sites_2023.Rdata")
+
+# Delete everything in the temporary folder
+files.remove <- list.files("D:/abmi/ClimateData/data/base/gis/temp/", full.names = TRUE)
+file.remove(files.remove)
+
+rm(list=ls())
+gc()
+
+##################
+# Off grid Sites # 
+##################~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Load arcpy back in
+arcpy <- import('arcpy') 
+
+# Define parallel processing factor
+arcpy$env$parallelProcessingFactor <- "100%"
+
+# Load the site paths, this file must be maintained in the 
+# "beta" folder and never uploaded to GitHub
+site.path <- read.csv("beta/site-paths_2023.csv")
+
+# Define the site path
+site.path <- paste0(site.path$Database[4], site.path$Feature[4])
+
+# Export the sites
+arcpy$ExportFeatures_conversion(in_features = site.path, 
+                                out_features = "D:/abmi/ClimateData/data/base/gis/temp/sites.shp")
+
+# Extract the DEM point values
+arcpy$sa$ExtractValuesToPoints(in_point_features = "D:/abmi/ClimateData/data/base/gis/temp/sites.shp", 
+                               in_raster = "D:/abmi/ClimateData/data/base/gis/dem/elevation_nasadem_30m.tif", 
+                               out_point_features = "D:/abmi/ClimateData/data/base/gis/temp/sites_dem.shp")
+
+# Extract the pAspen points
+arcpy$sa$ExtractValuesToPoints(in_point_features = "D:/abmi/ClimateData/data/base/gis/temp/sites.shp", 
+                               in_raster = "D:/abmi/ClimateData/data/base/gis/paspen/ASPEN9706.tif", 
+                               out_point_features = "D:/abmi/ClimateData/data/base/gis/temp/sites_paspen.shp")
+
+# Export the tables
+arcpy$ExportTable_conversion(in_table = "D:/abmi/ClimateData/data/base/gis/temp/sites_dem.shp", 
+                             out_table = "D:/abmi/ClimateData/data/base/gis/temp/sites_dem.csv")
+
+arcpy$ExportTable_conversion(in_table = "D:/abmi/ClimateData/data/base/gis/temp/sites_paspen.shp", 
+                             out_table = "D:/abmi/ClimateData/data/base/gis/temp/sites_paspen.csv")
+
+# Extract the information from ClimateNA
+# Standardize the output tables
+input.data <- read.csv("D:/abmi/ClimateData/data/base/gis/temp/sites_dem.csv")
+
+# Determine which columns identify year information
+site.id <- data.frame(Site = input.data$SITE,
+                      id1 = paste0(input.data$ProjectID, "_", input.data$Year),
+                      id2 = paste0(input.data$ProjectID, "_", input.data$Year),
+                      lat = input.data$Latitude,
+                      long = input.data$Longitude,
+                      elev = input.data$RASTERVALU)
+
+# Remove the NA ones temporarily. Not sure what is going on with these sites
+site.id <- site.id[!is.na(site.id$Site), ]
+
+# Save the results in the appropriate format appropriate input file
+write.csv(site.id[, -1], file = "D:/abmi/ClimateData/data/base/gis/temp/sites_cleaned.csv", row.names = FALSE)
+
+# Call the ClimateNA API to calculate the relevant climate variables
+# NOTE: We need to use the double backslash for the executable to read the information correctly
+ClimateNA_cmdLine(exe = "ClimateNA_v7.40.exe", 
+                  wkDir = "D:\\climateNA\\ClimateNA\\", 
+                  period = "Normal_1991_2020.nrm", 
+                  MSY = "Y", 
+                  inputFile = "D:\\abmi\\ClimateData\\data\\base\\gis\\temp\\sites_cleaned.csv", 
+                  outputFile = "D:\\abmi\\ClimateData\\data\\base\\gis\\temp\\sites_climate.csv")
+
+# Format the paspen information
+input.data <- read.csv("D:/abmi/ClimateData/data/base/gis/temp/sites_paspen.csv")
+
+# Determine which columns identify year information
+site.id <- data.frame(Site = input.data$SITE,
+                      id1 = paste0(input.data$ProjectID, "_", input.data$Year),
+                      id2 = paste0(input.data$ProjectID, "_", input.data$Year),
+                      lat = input.data$Latitude,
+                      long = input.data$Longitude,
+                      pAspen = input.data$RASTERVALU)
+
+# Remove the NA ones temporarily. Not sure what is going on with these sites
+site.id <- site.id[!is.na(site.id$Site), ]
+
+# Add the public site information
+public.coordinates <- read.csv("data/lookup/public-coordiantes.csv")
+public.coordinates <- public.coordinates[, c("SITE_ID", "PUBLIC_LATTITUDE", "PUBLIC_LONGITUDE",
+                                             "ELEVATION", "NATURAL_REGIONS", "NATURAL_SUBREGIONS")]
+colnames(public.coordinates) <- c("Site", "Latitude", "Longitude", "Elevation", 
+                                  "NrName", "NsrName")
+
+site.id <- merge.data.frame(public.coordinates, site.id[, c("Site", "id1", "pAspen")], by = "Site")
+site.id <- site.id[, -1]
+
+# Stitch together the paspen and climate information
+climate.data <- read.csv("D:/abmi/ClimateData/data/base/gis/temp/sites_climate.csv")
+climate.data <- climate.data[, !(colnames(climate.data) %in% c("id2", "Latitude", "Longitude",
+                                                               "Elevation", "MAR"))]
+
+climate.1ha <- merge.data.frame(site.id, climate.data, by = "id1")
+colnames(climate.1ha)[1] <- "Site_Year"
+
+# Save
+save(climate.1ha, file = "results/sites/off-grid-sites_2023.Rdata")
+
+# Delete everything in the temporary folder
+files.remove <- list.files("D:/abmi/ClimateData/data/base/gis/temp/", full.names = TRUE)
+file.remove(files.remove)
+
+rm(list=ls())
+gc()
+
+#############
+# Quadrants # 
+#############~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Load the site paths, this file must be maintained in the "beta" folder and never uploaded to GitHub
+site.path <- read.csv("beta/site-paths_2023.csv")
+
+# Define the terrestrial path
+site.path <- paste0(site.path$Database[1], site.path$Feature[1])
+
+# Load arcpy
+arcpy <- import('arcpy') 
+
+# Define parallel processing factor
+arcpy$env$parallelProcessingFactor <- "100%"
+
+# Select the quadrants
+arcpy$Select_analysis(in_features = site.path, 
+                      out_feature_class = "D:/abmi/ClimateData/data/base/gis/temp/sites.shp", 
+                      where_clause = "Section IN ('NE', 'NW', 'SE', 'SW')")
+
+# Find the centroids of each quadrant (EPSG 4326)
+# Need both Lat/Long (for ClimateNA) and the same projection as the DEM
+arcpy$management$CalculateGeometryAttributes(in_features = "D:/abmi/ClimateData/data/base/gis/temp/sites.shp", 
+                                             geometry_property = "Latitude CENTROID_Y;Longitude CENTROID_X", 
+                                             coordinate_system = "GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]]", 
+                                             coordinate_format = "DD")
+
+arcpy$management$CalculateGeometryAttributes(in_features = "D:/abmi/ClimateData/data/base/gis/temp/sites.shp", 
+                                             geometry_property = "Y CENTROID_Y;X CENTROID_X", 
+                                             coordinate_system = "GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]]")
+
+# Convert to points
+arcpy$management$XYTableToPoint(in_table = "D:/abmi/ClimateData/data/base/gis/temp/sites.shp", 
+                                out_feature_class = "D:/abmi/ClimateData/data/base/gis/temp/sites_centroid.shp", 
+                                x_field = "X", 
+                                y_field = "Y", 
+                                coordinate_system = "GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]];-400 -400 1000000000;-100000 10000;-100000 10000;8.98315284119521E-09;0.001;0.001;IsHighPrecision")
+
+# Extract the DEM point values
+arcpy$sa$ExtractValuesToPoints(in_point_features = "D:/abmi/ClimateData/data/base/gis/temp/sites_centroid.shp", 
+                              in_raster = "D:/abmi/ClimateData/data/base/gis/dem/elevation_nasadem_30m.tif", 
+                              out_point_features = "D:/abmi/ClimateData/data/base/gis/temp/sites_dem.shp")
+
+# Extract the pAspen points
+arcpy$sa$ExtractValuesToPoints(in_point_features = "D:/abmi/ClimateData/data/base/gis/temp/sites_centroid.shp", 
+                               in_raster = "D:/abmi/ClimateData/data/base/gis/paspen/ASPEN9706.tif", 
+                               out_point_features = "D:/abmi/ClimateData/data/base/gis/temp/sites_paspen.shp")
+
+# Export the tables
+arcpy$ExportTable_conversion(in_table = "D:/abmi/ClimateData/data/base/gis/temp/sites_dem.shp", 
+                             out_table = "D:/abmi/ClimateData/data/base/gis/temp/sites_dem.csv")
+
+arcpy$ExportTable_conversion(in_table = "D:/abmi/ClimateData/data/base/gis/temp/sites_paspen.shp", 
+                             out_table = "D:/abmi/ClimateData/data/base/gis/temp/sites_paspen.csv")
+
+# Standardize the output tables
+input.data <- read.csv("D:/abmi/ClimateData/data/base/gis/temp/sites_dem.csv")
+input.data$Site_Year <- input.data$UID
+
+# Format the kgrid to be the appropriate input file
+input.data <- input.data[, c("Site_Year", "Site_Year", "Latitude",  "Longitude", "RASTERVALU")]
+colnames(input.data) <- c("id1", "id2", "lat", "long", "elev")
+
+write.csv(input.data, file = "D:/abmi/ClimateData/data/base/gis/temp/sites_cleaned.csv", row.names = FALSE)
+
+# Call the ClimateNA API to calculate the relevant climate variables
+# NOTE: We need to use the double backslash for the executable to read the information correctly
+ClimateNA_cmdLine(exe = "ClimateNA_v7.40.exe", 
+                  wkDir = "D:\\climateNA\\ClimateNA\\", 
+                  period = "Normal_1991_2020.nrm", 
+                  MSY = "Y", 
+                  inputFile = "D:\\abmi\\ClimateData\\data\\base\\gis\\temp\\sites_cleaned.csv", 
+                  outputFile = "D:\\abmi\\ClimateData\\data\\base\\gis\\temp\\sites_climate.csv")
+
+# Format the paspen information
+input.data <- read.csv("D:/abmi/ClimateData/data/base/gis/temp/sites_paspen.csv")
+
+# Determine which columns identify year information
+site.id <- data.frame(Site = input.data$ABMI2,
+                      id1 = input.data$UID,
+                      id2 = input.data$UID,
+                      lat = input.data$Latitude,
+                      long = input.data$Longitude,
+                      pAspen = input.data$RASTERVALU)
+rownames(site.id) <- site.id$id1
+
+# Load the missing site data
+missing.sites <- read.csv("data/lookup/nearest-abmi-site.csv")
+rownames(missing.sites) <- missing.sites$Site_Year_Quadrant
+
+# Add the nearest site information
+site.id$Site <- missing.sites[site.id$id1, "Nearest_ABMI"]
+
+# Add the public site information
+public.coordinates <- read.csv("data/lookup/public-coordiantes.csv")
+public.coordinates <- public.coordinates[, c("SITE_ID", "PUBLIC_LATTITUDE", "PUBLIC_LONGITUDE",
+                                             "ELEVATION", "NATURAL_REGIONS", "NATURAL_SUBREGIONS")]
+colnames(public.coordinates) <- c("Site", "Latitude", "Longitude", "Elevation", 
+                                  "NrName", "NsrName")
+
+site.id <- merge.data.frame(public.coordinates, site.id[, c("Site", "id1", "pAspen")], by = "Site")
+site.id <- site.id[, -1]
+
+# Stitch together the paspen and climate information
+climate.data <- read.csv("D:/abmi/ClimateData/data/base/gis/temp/sites_climate.csv")
+climate.data <- climate.data[, !(colnames(climate.data) %in% c("id2", "Latitude", "Longitude",
+                                                               "Elevation", "MAR"))]
+
+climate.qa <- merge.data.frame(site.id, climate.data, by = "id1")
+colnames(climate.qa)[1] <- "Site_Year_Quadrant"
+
+# Save
+save(climate.qa, file = "results/sites/terrestrial-quadrants_2023.Rdata")
+
+# Delete everything in the temporary folder
+files.remove <- list.files("D:/abmi/ClimateData/data/base/gis/temp/", full.names = TRUE)
+file.remove(files.remove)
+
+rm(list=ls())
+gc()
+
+#################
+# Wetland sites # Need to update
+#################~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Clear memory
+rm(list=ls())
+gc()
+
+# Load libraries
+library(ClimateNAr)
+
+# Load new kgrid
+input.data <- read.csv("D:/abmi/ClimateData/beta/wetland-sites.csv")
+input.data$Site_Year <- paste0(input.data$ABMISite, "_", input.data$year)
+
+# Format the kgrid to be the appropriate input file
+input.data <- input.data[, c("Site_Year", "Site_Year", "LATITUDE",  "LONGITUDE", "RASTERVALU")]
+colnames(input.data) <- c("id1", "id2", "lat", "long", "elev")
+
+write.csv(input.data, file = "D:/abmi/ClimateData/beta/wetland-sites_cleaned.csv", row.names = FALSE)
+
+# Call the ClimateNA API to calculate the relevant climate variables
+# NOTE: We need to use the double backslash for the executable to read the information correctly
+ClimateNA_cmdLine(exe = "ClimateNA_v7.40.exe", 
+                  wkDir = "D:\\climateNA\\ClimateNA\\", 
+                  period = "Normal_1991_2020.nrm", 
+                  MSY = "Y", 
+                  inputFile = "D:\\abmi\\ClimateData\\beta\\wetland-sites_cleaned.csv", 
+                  outputFile = "D:\\abmi\\ClimateData\\beta\\wetland-sites_cleaned-climate.csv")
+
+rm(list=ls())
+gc()
+
+# Organize
+
+original.data <- read.csv("D:/abmi/ClimateData/beta/wetland-sites.csv")
+original.data$Site_Year <- paste0(original.data$ABMISite, "_", original.data$year)
+
+clim <- original.data[, c("Site_Year", "ABMISite", "year", "NRNAME", "NSRNAME", "RASTERVALU")]
+
+# Add public coordinates
+public.coord <- read.csv("data/lookup/public-coordiantes.csv")
+colnames(public.coord)[1] <- "Site"
+
+clim$Site <- clim$ABMISite
+clim$Site <- gsub("W", "", clim$Site)
+clim$Site <- gsub("OG-ABMI-", "", clim$Site)
+clim$Site <- gsub("-1", "", clim$Site)
+clim$Site <- gsub("-2", "", clim$Site)
+clim$Site <- gsub("-41", "", clim$Site)
+clim$Site <- gsub("-11", "", clim$Site)
+clim$Site <- gsub("-21", "", clim$Site)
+clim$Site <- gsub("-12", "", clim$Site)
+clim$Site <- gsub("B", "", clim$Site)
+clim$Site <- as.numeric(clim$Site)
+
+clim <- merge.data.frame(clim, public.coord[, c("Site", "PUBLIC_LATTITUDE", "PUBLIC_LONGITUDE")], by = "Site", all.x = TRUE)
+clim <- clim[, c(2,3,4,8,9,5,6,7)]
+colnames(clim) <- c("Site_Year", "Site", "Year","Latitude", "Longitude", "NrName", "NsrName", "Elevation")
+
+# Merge with the climate data
+climate.data <- read.csv("D:/abmi/ClimateData/beta/wetland-sites_cleaned-climate.csv")
+colnames(climate.data)[1] <- "Site_Year"
+
+clim <- merge.data.frame(clim, climate.data[, -c(2,3,4,5)], by = "Site_Year")
+
+# Save
+save(clim, file = "results/sites/wetland-climate_2023.Rdata")
+
+# DELETE THE DATA FILES
+rm(list=ls())
+gc()
