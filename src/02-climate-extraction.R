@@ -55,7 +55,7 @@ dem.data <- read_sf("data/base/gis/kgrid_dem.shp")
 dem.data <- data.frame(Row_Col = dem.data$GRID_LABEL,
                        Elevation = dem.data$RASTERVALU)
 
-# There are a few points where the zonal statistic calculaion failed (small LinkID polygons)
+# There are a few points where the zonal statistic calculation failed (small LinkID polygons)
 # Therefore, we manually corrected them to the value of LinkID centroid
 dem.data[dem.data$Row_Col == "1143_355", "Elevation"] <- 2443.24
 dem.data[dem.data$Row_Col == "1231_398", "Elevation"] <- 1888.308
