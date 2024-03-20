@@ -1,10 +1,10 @@
 #
 # Title: Extraction of the climate data from the Climate NA software
 # Created: July 27, 2023
-# Last Updated: July 27, 2023
+# Last Updated: March 20, 2024
 # Author: Brandon Allen
 # Objectives: Create a new kgrid based on the Climate NA data
-# Keywords: Notes, Kgrid Standardization, Climate Extraction, Visualization
+# Keywords: Notes, Kgrid Standardization, Climate Extraction, Hydrotemporal, Visualization
 #
 
 #########
@@ -51,7 +51,7 @@ kgrid.new <- kgrid.new[, c("Row_Col", "x", "y", "wS", "wN")]
 kgrid <- merge.data.frame(kgrid, kgrid.new, by = "Row_Col")
 
 # Add the new elevation data
-dem.data <- read_sf("data/base/gis/kgrid_dem.shp")
+dem.data <- read_sf("data/base/gis/dem/kgrid_dem.shp")
 dem.data <- data.frame(Row_Col = dem.data$GRID_LABEL,
                        Elevation = dem.data$RASTERVALU)
 
@@ -67,15 +67,23 @@ table(dem.data$Elevation == 0)
 
 kgrid <- merge.data.frame(kgrid, dem.data, by = "Row_Col")
 
+# Add the UTM Easting and Northing information
+utm10 <- st_as_sf(kgrid, coords=c("POINT_X", "POINT_Y"), crs=4326, remove=FALSE)
+utm10 <- st_coordinates(st_transform(utm10, crs = 3400))
+kgrid$Easting <- utm10[,1]
+kgrid$Northing <- utm10[,2]
+
 # Organize columns in the appropriate order and rename
-kgrid <- kgrid[, c("Row", "Col", "Row_Col", "Row10", "Col10", "Row10_Col10", "POINT_X", "POINT_Y", "x", "y", 
-                   "NRNAME", "NSRNAME", "LUF_NAME", "ReportingBoundaries", "Area_km2", "Elevation", "pAspen", "pWater", "wS", "wN")]
-colnames(kgrid) <- c("Row", "Col", "LinkID", "Row10", "Col10", "LinkID10", "Longitude", "Latitude", "X", "Y",
-                     "NrName", "NsrName", "LufName", "ReportingBoundaries", "AreaKm2", "Elevation", "pAspen", "pWater", "wS", "wN")
+kgrid <- kgrid[, c("Row", "Col", "Row_Col", "Row10", "Col10", "Row10_Col10", "POINT_X", "POINT_Y", 
+                   "Easting", "Northing", "x", "y", "NRNAME", "NSRNAME", "LUF_NAME", 
+                   "ReportingBoundaries", "Area_km2", "Elevation", "pAspen", "pWater", "wS", "wN")]
+colnames(kgrid) <- c("Row", "Col", "LinkID", "Row10", "Col10", "LinkID10", "Longitude", "Latitude", 
+                     "Easting", "Northing", "X", "Y", "NrName", "NsrName", "LufName", 
+                     "ReportingBoundaries", "AreaKm2", "Elevation", "pAspen", "pWater", "wS", "wN")
 
 rm(kgrid.new, dem.data)
 comment(kgrid) <- c("Kgrid version 2.0.", 
-                    "Created on July 27th, 2023.",
+                    "Created on March 20th, 2024.",
                     "Metadata can be found on the ABMI ClimateData GitHub page.",
                     "Metadata can also be found ABMI ClimateData technical document on the Shared SC Google Drive.")
 
@@ -91,6 +99,8 @@ gc()
 
 # Load libraries
 library(ClimateNAr)
+library(dismo)
+library(terra)
 
 # Load new kgrid
 load("results/kgrid/kgrid-no-climate.Rdata")
@@ -108,22 +118,72 @@ ClimateNA_cmdLine(exe = "ClimateNA_v7.40.exe",
                   period = "Normal_1991_2020.nrm", 
                   MSY = "Y", 
                   inputFile = "D:\\abmi\\ClimateData\\data\\base\\kgrid\\climate-input.csv", 
-                  outputFile = "D:\\abmi\\ClimateData\\data\\processed\\kgrid_normals_1991_2020_calculated.csv")
+                  outputFile = "D:\\abmi\\ClimateData\\data\\processed\\kgrid_normals_1991_2020_yearly.csv")
+
+ClimateNA_cmdLine(exe = "ClimateNA_v7.40.exe", 
+                  wkDir = "D:\\climateNA\\ClimateNA\\", 
+                  period = "Normal_1991_2020.nrm", 
+                  MSY = "M", 
+                  inputFile = "D:\\abmi\\ClimateData\\data\\base\\kgrid\\climate-input.csv", 
+                  outputFile = "D:\\abmi\\ClimateData\\data\\processed\\kgrid_normals_1991_2020_monthly.csv")
 
 # Load the csv and merge with the kgrid so we have a single file
-input.data <- read.csv("D:\\abmi\\ClimateData\\data\\processed\\kgrid_normals_1991_2020_calculated.csv")
+input.data <- read.csv("D:\\abmi\\ClimateData\\data\\processed\\kgrid_normals_1991_2020_yearly.csv")
 colnames(input.data)[1] <- "LinkID"
 input.data <- input.data[, -c(2:5)]
 
 kgrid <- merge.data.frame(kgrid, input.data, by = "LinkID")
 kgrid <- kgrid[ , colnames(kgrid) != "MAR"] # MAR is a voided attribute
 
+# Add the monthly variables
+input.data <- read.csv("D:\\abmi\\ClimateData\\data\\processed\\kgrid_normals_1991_2020_monthly.csv")
+rownames(input.data) <- input.data$id1
+
+tmax <- as.matrix(input.data[, 6:17])
+tmin <- as.matrix(input.data[, 18:29])
+precip <- as.matrix(input.data[, 42:53])
+
+derived.climate <- as.data.frame(biovars(prec = precip, 
+                                         tmin = tmin, 
+                                         tmax = tmax))
+derived.climate$LinkID <- input.data$id1
+derived.climate <- derived.climate[, c("LinkID", "bio9", "bio15")]
+
+kgrid <- merge.data.frame(kgrid, derived.climate, by = "LinkID")
+
 comment(kgrid) <- c("Kgrid version 2.0.", 
-                    "Created on July 27th, 2023.",
+                    "Created on March 20th, 2024.",
                     "Metadata can be found on the ABMI ClimateData GitHub page.",
                     "Metadata can also be found ABMI ClimateData technical document on the Shared SC Google Drive.")
 
 save(kgrid, file = "results/kgrid/kgrid_2.0.Rdata")
+
+#################
+# Hydrotemporal #
+#################~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Load the spatial boundaries and the htv raster
+zone.shape <- terra::vect("D:/spatial/GRID1SQKM_AB2020.gdb/", layer = "Grid_1KM_revAB2020")
+htv.raster <- terra::rast("data/base/gis/hydrotemporal/HTV_v2.tif")
+
+zonal.stats <- terra::zonal(x = htv.raster, z = zone.shape,
+                            fun = mean, na.rm = TRUE)
+
+zonal.stats$LinkID <- zone.shape$GRID_LABEL 
+colnames(zonal.stats)[1] <- "HTV"
+
+# Merge with the climate data
+kgrid <- merge.data.frame(kgrid, zonal.stats, by = "LinkID")
+
+comment(kgrid) <- c("Kgrid version 2.0.", 
+                    "Created on March 20th, 2024.",
+                    "Metadata can be found on the ABMI ClimateData GitHub page.",
+                    "Metadata can also be found ABMI ClimateData technical document on the Shared SC Google Drive.")
+
+save(kgrid, file = "results/kgrid/kgrid_2.0.Rdata")
+
+rm(list=ls())
+gc()
 
 #################
 # Visualization # 
