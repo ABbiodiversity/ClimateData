@@ -1,7 +1,7 @@
 #
 # Title: Off-grid climate summaries
 # Created: December 4th, 2023
-# Last Updated: March 19th, 2024
+# Last Updated: March 21st, 2024
 # Author: Brandon Allen
 # Objectives: Extraction of the climate data from the Climate NA software (Off grid sites summaries)
 # Keywords: Notes, Initialization, Climate
@@ -42,22 +42,27 @@ arcpy$env$parallelProcessingFactor <- "100%"
 # Climate # 
 ###########~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# Load arcpy back in
-arcpy <- import('arcpy') 
-
-# Define parallel processing factor
-arcpy$env$parallelProcessingFactor <- "100%"
-
 # Load the site paths, this file must be maintained in the 
 # "beta" folder and never uploaded to GitHub
-site.path <- read.csv("beta/site-paths_2023.csv")
+site.path.id <- read.csv("beta/site-paths_2023.csv")
 
 # Define the site path
-site.path <- paste0(site.path$Database[4], site.path$Feature[4])
+site.path <- paste0(site.path.id$Database[4], site.path.id$Feature[4])
+site.path.buffer <- paste0(site.path.id$Database[1], site.path.id$Feature[1])
 
 # Export the sites
 arcpy$ExportFeatures_conversion(in_features = site.path, 
                                 out_features = "D:/abmi/ClimateData/data/base/gis/temp/sites.shp")
+
+# Export site buffer 
+arcpy$Select_analysis(in_features = site.path.buffer, 
+                      out_feature_class = "D:/abmi/ClimateData/data/base/gis/temp/sites_buffer.shp", 
+                      where_clause = "Section IN ('NE', 'NW', 'SE', 'SW')")
+
+# Simplify the buffer by site_year
+arcpy$PairwiseDissolve_analysis(in_features = "D:/abmi/ClimateData/data/base/gis/temp/sites_buffer.shp", 
+                                out_feature_class = "D:/abmi/ClimateData/data/base/gis/temp/sites_buffer_dissolve.shp", 
+                                dissolve_field = "UID_old")
 
 # Extract the DEM point values
 arcpy$sa$ExtractValuesToPoints(in_point_features = "D:/abmi/ClimateData/data/base/gis/temp/sites.shp", 
@@ -185,19 +190,37 @@ rownames(climate.1ha) <- climate.1ha$Site_Year
 # Save
 save(climate.1ha, file = "data/processed/sites/offgrid-1ha_2023.Rdata")
 
-# Delete everything in the temporary folder
-files.remove <- list.files("D:/abmi/ClimateData/data/base/gis/temp/", full.names = TRUE)
-file.remove(files.remove)
+#################
+# Hydrotemporal #
+#################~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-rm(list=ls())
-gc()
+# Load the spatial boundaries and the htv raster
+zone.shape <- terra::vect("data/base/gis/temp/sites_buffer_dissolve.shp")
+htv.raster <- terra::rast("data/base/gis/hydrotemporal/HTV_v2.tif")
+
+zonal.stats <- terra::zonal(x = htv.raster, z = zone.shape,
+                            fun = mean, na.rm = TRUE)
+
+zonal.stats$Site_Year <- zone.shape$UID_old 
+colnames(zonal.stats)[1] <- "HTV"
+colnames(zonal.stats)[2] <- "Site_Year"
 
 # Stitch together all sites
 load("data/processed/sites/offgrid-1ha_2023.Rdata")
 climate.off <- climate.1ha
 load("data/processed/sites/ongrid-1ha_2023.Rdata")
 climate.1ha <- rbind(climate.1ha, climate.off)
+
+# Merge with the climate data
+# There seems to be missing sites from the climate points versus the buffers.
+# Not sure what is going on there.
+climate.1ha <- merge.data.frame(climate.1ha, zonal.stats, by = "Site_Year", all.x = TRUE)
+
 save(climate.1ha, file = "results/sites/abmi-terrestrial-site-climate_2023.Rdata")
+
+# Delete everything in the temporary folder
+files.remove <- list.files("D:/abmi/ClimateData/data/base/gis/temp/", full.names = TRUE)
+file.remove(files.remove)
 
 rm(list=ls())
 gc()
