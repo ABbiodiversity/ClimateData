@@ -4,7 +4,7 @@
 # Last Updated: March 19th, 2024
 # Author: Brandon Allen
 # Objectives: Extraction of the climate data from the Climate NA software (Cam/ARU summaries)
-# Keywords: Notes, Initialization, Climate
+# Keywords: Notes, Initialization, Climate, Hydrotemporal
 #
 
 ######### The latitude, longitude, and elevation information can't be stored permanently, so once extractions are
