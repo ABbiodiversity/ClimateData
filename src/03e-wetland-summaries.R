@@ -196,3 +196,81 @@ file.remove(files.remove)
 
 rm(list=ls())
 gc()
+
+#################
+# Hydrotemporal #
+#################~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Load the site paths, this file must be maintained in the 
+# "beta" folder and never uploaded to GitHub
+site.path.id <- read.csv("beta/site-paths_2023.csv")
+
+# Load arcpy
+arcpy <- import('arcpy') 
+
+# Define parallel processing factor
+arcpy$env$parallelProcessingFactor <- "100%"
+
+# Object to store results
+htv.summary <- data.frame(Site_Year = NA,
+                          HTV_250 = NA,
+                          HTV_500 = NA)
+
+for(year in c(2007:2019, 2021:2023)) {
+  
+  # Define the site path
+  site.path <- paste0(site.path.id$Database[9], paste0("ABMIsitesInternal.DBO.mask_wet_buff", year))
+  
+  # Export the sites
+  arcpy$ExportFeatures_conversion(in_features = site.path, 
+                                  out_features = "D:/abmi/ClimateData/data/base/gis/temp/sites.shp")
+  
+  # Create a merged version for the complete 500m buffer
+  arcpy$PairwiseDissolve_analysis(in_features = "D:/abmi/ClimateData/data/base/gis/temp/sites.shp", 
+                                  out_feature_class = "D:/abmi/ClimateData/data/base/gis/temp/sites_buffer.shp", 
+                                  dissolve_field = "ABMISite")
+  
+  # Load the spatial boundaries and the htv raster
+  zone.shape <- terra::vect("data/base/gis/temp/sites.shp")
+  htv.raster <- terra::rast("data/base/gis/hydrotemporal/HTV_v2.tif")
+  
+  zonal.stats <- terra::zonal(x = htv.raster, z = zone.shape,
+                              fun = mean, na.rm = TRUE)
+  
+  zonal.stats$Site_Year <- paste0(zone.shape$ABMISite, "_", zone.shape$survey_yea)
+  zonal.stats$Buffer <- zone.shape$Section
+  colnames(zonal.stats)[1] <- "HTV_250"
+  zonal.stats$HTV_250[is.nan(zonal.stats$HTV_250)] <- NA
+  zonal.results <- zonal.stats[zonal.stats$Buffer == "0-250m", ]
+  
+  # Repeat for the 500m buffer
+  zone.shape <- terra::vect("data/base/gis/temp/sites_buffer.shp")
+  zonal.stats <- terra::zonal(x = htv.raster, z = zone.shape,
+                              fun = mean, na.rm = TRUE)
+  
+  zonal.stats$Site_Year <- paste0(zone.shape$ABMISite, "_", year)
+  colnames(zonal.stats)[1] <- "HTV_500"
+  zonal.stats$HTV_500[is.nan(zonal.stats$HTV_500)] <- NA
+  
+  zonal.results <- merge.data.frame(zonal.results, zonal.stats, by = "Site_Year")
+  
+  # Merge
+  htv.summary <- rbind(htv.summary, zonal.results[, colnames(htv.summary)])
+  
+  # Delete everything in the temporary folder
+  files.remove <- list.files("D:/abmi/ClimateData/data/base/gis/temp/", full.names = TRUE)
+  file.remove(files.remove)
+  
+  print(year)
+  
+}
+
+# Load the data and merge
+load("results/sites/abmi-wetland-climate_2023.Rdata")
+wetland.climate <- merge.data.frame(wetland.climate, htv.summary, by = "Site_Year")
+
+# Save
+save(wetland.climate, file = "results/sites/abmi-wetland-climate_2023.Rdata")
+
+rm(list=ls())
+gc()
