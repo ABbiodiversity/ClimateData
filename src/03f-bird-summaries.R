@@ -1,7 +1,7 @@
 #
 # Title: Bird point climate summaries
 # Created: December 4th, 2023
-# Last Updated: March 19th, 2024
+# Last Updated: June 4th, 2024
 # Author: Brandon Allen
 # Objectives: Extraction of the climate data from the Climate NA software (ABMI and public bird points)
 # Keywords: Notes, Initialization, Climate
@@ -241,6 +241,34 @@ zonal.stats <- rbind(zonal.stats, zonal.stats.private)
 
 # Merge with the climate data
 climate.data <- merge.data.frame(climate.data, zonal.stats, by = "UID")
+
+# Save
+save(climate.data, file = "results/sites/bird-point-climate_2024.Rdata")
+
+######################
+# Natural subregions #
+######################~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Load the spatial boundaries and the htv raster
+public.shape <- terra::vect("data/base/gis/temp/sites_public.shp")
+private.shape <- terra::vect("data/base/gis/temp/sites_secret.shp")
+natural.regions <- terra::vect("D:/spatial/NSR/Natural_Regions_Subregions_of_Alberta.shp")
+
+public.nsr <- terra::intersect(x = public.shape, y = natural.regions)
+private.nsr <- terra::intersect(x = private.shape, y = natural.regions)
+
+public.nsr <- data.frame(UID = public.nsr$UID,
+                         NrName = public.nsr$NRNAME,
+                         NsrName = public.nsr$NSRNAME)
+
+private.nsr <- data.frame(UID = private.nsr$UID,
+                          NrName = private.nsr$NRNAME,
+                          NsrName = private.nsr$NSRNAME)
+
+nsr.data <- rbind(public.nsr, private.nsr)
+
+# Merge with the climate data
+climate.data <- merge.data.frame(nsr.data, climate.data, by = "UID")
 
 # Save
 save(climate.data, file = "results/sites/bird-point-climate_2024.Rdata")
