@@ -20,9 +20,19 @@ gc()
 
 # Load libraries
 library(dismo)
-library(gdalUtils)
 library(raster)
+library(reticulate)
 library(sf)
+
+# Initialize arcpy so we can update the metadata for the rasters with a template
+py_discover_config() # We need version 3.9
+py_config() # Double check it is version 3.9
+
+# Set python 
+use_python(python = "C:/Users/ballen/AppData/Local/r-miniconda/envs/r-reticulate/python.exe")
+
+# Load arcpy
+arcpy <- import('arcpy') 
 
 # Load new kgrid without the climate information
 load("results/kgrid/kgrid-no-climate.Rdata")
@@ -72,9 +82,23 @@ for(variable in climate.variables) {
               filename = paste0("results/data-product/", variable, 
                                 ".tif"),
               overwrite = TRUE)
+  
+  # Define the functions for updating the metadata
+  metadata.function <- arcpy$metadata
+  raster.metadata <- metadata.function$Metadata(paste0("results/data-product/", 
+                                                       variable, 
+                                                       ".tif"))
+  
+  # Update the metadata fields
+  raster.metadata$title <- variable
+  raster.metadata$tags <- '"ClimateNA", "1km Grid", "1991-2020 30-year average"'
+  raster.metadata$summary <- "Gridded (1km) annual climate variables for Alberta based on the 1991-2020 30-year average."
+  raster.metadata$description <- "ClimateNA (Version 7.4) is a standalone application that downscales PRISM (Daly et al. 2008) gridded monthly climate normal data (800 x 800 m) to scale-free point locations (Wang et al., 2016). We calculated annual climate variables based on the 30-year average for 1991-2020. Monthly climate variables were also extracted from the 1991-2020 30-year average and used to calculate the BioClim variables using the dismo R package (Robert et al., 2022)."
+  
+  # Save the metadata to the target raster
+  raster.metadata$save()
 
 }
 
 rm(list=ls())
 gc()
-
