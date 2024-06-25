@@ -93,7 +93,7 @@ for(variable in climate.variables) {
   raster.metadata$title <- variable
   raster.metadata$tags <- '"ClimateNA", "1km Grid", "1991-2020 30-year average"'
   raster.metadata$summary <- "Gridded (1km) annual climate variables for Alberta based on the 1991-2020 30-year average."
-  raster.metadata$description <- "ClimateNA (Version 7.4) is a standalone application that downscales PRISM (Daly et al. 2008) gridded monthly climate normal data (800 x 800 m) to scale-free point locations (Wang et al., 2016). We calculated annual climate variables based on the 30-year average for 1991-2020. Monthly climate variables were also extracted from the 1991-2020 30-year average and used to calculate the BioClim variables using the dismo R package (Robert et al., 2022)."
+  raster.metadata$description <- "ClimateNA (Version 7.4) is a standalone application that downscales PRISM (Daly et al. 2008) gridded monthly climate normal data (800 x 800 m) to scale-free point locations (Wang et al., 2016). We calculated annual climate variables based on the 30-year average for 1991-2020. Monthly climate variables were also extracted from the 1991-2020 30-year average and used to calculate the BioClim variables using the dismo R package (Version 1.3-14; Robert et al., 2022)."
   
   # Save the metadata to the target raster
   raster.metadata$save()
